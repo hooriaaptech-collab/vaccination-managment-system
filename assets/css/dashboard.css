@@ -1,0 +1,508 @@
+/* ====================================================================
+   E-VACCINATION MANAGEMENT SYSTEM
+   Luxury Executive Dashboard Design System
+   Admin, Parent & Hospital Portals
+   ==================================================================== */
+
+:root {
+    --dash-sidebar-width: 270px;
+    --dash-topbar-height: 72px;
+    
+    /* Luxury Palette */
+    --primary-emerald: #064E3B;
+    --primary-emerald-hover: #04382A;
+    --primary-emerald-light: #ECFDF5;
+    --primary-teal: #0F766E;
+    --accent-cyan: #06B6D4;
+    --accent-mint: #10B981;
+    --accent-coral: #F97316;
+    --accent-amber: #F59E0B;
+    
+    /* Surfaces & Neutrals */
+    --dark-obsidian: #09111E;
+    --dark-slate: #1E293B;
+    --dark-muted: #475569;
+    --text-muted: #64748B;
+    --bg-canvas: #F8FAFC;
+    --bg-surface: #FFFFFF;
+    
+    /* Subtle Borders & Shadows */
+    --card-border: rgba(15, 118, 110, 0.12);
+    --border-subtle: #E2E8F0;
+    --shadow-subtle: 0 4px 16px rgba(15, 23, 42, 0.04);
+    --shadow-card: 0 10px 30px -4px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(15, 23, 42, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    --shadow-card-hover: 0 20px 40px -8px rgba(6, 78, 59, 0.2), 0 8px 16px -4px rgba(6, 182, 212, 0.12), inset 0 1px 0 #FFFFFF;
+    --shadow-glow: 0 8px 24px -4px rgba(16, 185, 129, 0.35);
+    
+    /* Radii */
+    --radius-xl: 20px;
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.dashboard-body {
+    background-color: var(--bg-canvas);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--dark-slate);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+body.sidebar-open {
+    overflow: hidden;
+}
+
+/* Dashboard Wrapper */
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+/* Mobile Sidebar Backdrop Overlay */
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(9, 17, 30, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 1039;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition-smooth);
+}
+
+.sidebar-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ====================================================================
+   LUXURY SIDEBAR (Modern Glass / Obsidian-Emerald Styling)
+   ==================================================================== */
+.dashboard-sidebar {
+    width: var(--dash-sidebar-width);
+    background: #FFFFFF;
+    border-right: 1px solid var(--card-border);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1045;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.04);
+    transition: var(--transition-smooth);
+}
+
+.sidebar-brand-wrapper {
+    height: var(--dash-topbar-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.35rem;
+    border-bottom: 1px solid rgba(15, 118, 110, 0.08);
+}
+
+.sidebar-brand {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--primary-emerald);
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+}
+
+.sidebar-close-btn {
+    display: none;
+    background: #F1F5F9;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-smooth);
+}
+
+.sidebar-close-btn:hover {
+    background: #E2E8F0;
+    color: var(--dark-obsidian);
+}
+
+.sidebar-role-badge {
+    margin: 1.15rem 1.25rem 0.65rem 1.25rem;
+    padding: 0.75rem 1.15rem;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, #ECFDF5 0%, #E0F2FE 100%);
+    border: 1px solid rgba(20, 184, 166, 0.3);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
+}
+
+.sidebar-role-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--primary-teal);
+    font-weight: 800;
+}
+
+.sidebar-role-name {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--dark-obsidian);
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0.85rem 0.85rem;
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.sidebar-section-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 800;
+    padding: 0.9rem 0.85rem 0.4rem 0.85rem;
+}
+
+.sidebar-menu-item {
+    margin-bottom: 0.3rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.72rem 1.05rem;
+    border-radius: var(--radius-md);
+    color: var(--dark-slate);
+    font-weight: 600;
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition: var(--transition-smooth);
+    position: relative;
+}
+
+.sidebar-link i {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    transition: var(--transition-smooth);
+}
+
+.sidebar-link:hover {
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(6, 182, 212, 0.06) 100%);
+    color: var(--primary-emerald);
+    transform: translateX(3px);
+}
+
+.sidebar-link:hover i {
+    color: var(--primary-emerald);
+}
+
+.sidebar-link.active {
+    background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--primary-teal) 60%, var(--accent-mint) 100%);
+    color: #FFFFFF !important;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(6, 78, 59, 0.35);
+}
+
+.sidebar-link.active i {
+    color: #FFFFFF !important;
+}
+
+.sidebar-footer {
+    padding: 1.15rem 1.25rem;
+    border-top: 1px solid rgba(15, 118, 110, 0.08);
+}
+
+/* ====================================================================
+   MAIN CONTENT AREA & TOPBAR
+   ==================================================================== */
+.dashboard-main {
+    margin-left: var(--dash-sidebar-width);
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - var(--dash-sidebar-width));
+    transition: var(--transition-smooth);
+}
+
+.dashboard-topbar {
+    height: var(--dash-topbar-height);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.03);
+}
+
+.topbar-toggle {
+    display: none;
+    background: #F8FAFC;
+    border: 1.5px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    font-size: 1.4rem;
+    color: var(--dark-obsidian);
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-smooth);
+}
+
+.topbar-toggle:hover {
+    background: var(--primary-emerald-light);
+    color: var(--primary-emerald);
+    border-color: var(--accent-mint);
+}
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--accent-cyan) 100%);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.05rem;
+    box-shadow: 0 4px 12px rgba(6, 78, 59, 0.3);
+    flex-shrink: 0;
+    border: 2px solid #FFFFFF;
+}
+
+.dashboard-content {
+    padding: 2rem;
+    flex: 1;
+    width: 100%;
+}
+
+/* ====================================================================
+   3D KPI STAT CARDS WITH AMBIENT GLOW
+   ==================================================================== */
+.dash-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    padding: 1.65rem;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.dash-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: rgba(6, 182, 212, 0.35);
+}
+
+.dash-card-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+}
+
+.dash-card-icon.emerald { 
+    background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); 
+    color: var(--primary-emerald); 
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
+}
+.dash-card-icon.teal { 
+    background: linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%); 
+    color: var(--primary-teal); 
+    box-shadow: 0 6px 16px rgba(20, 184, 166, 0.25);
+}
+.dash-card-icon.coral { 
+    background: linear-gradient(135deg, #FFEDD5 0%, #FED7AA 100%); 
+    color: var(--accent-coral); 
+    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.25);
+}
+.dash-card-icon.purple { 
+    background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%); 
+    color: #9333EA; 
+    box-shadow: 0 6px 16px rgba(147, 51, 234, 0.25);
+}
+
+.dash-card-title {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.35rem;
+}
+
+.dash-card-value {
+    font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+    font-weight: 900;
+    color: var(--dark-obsidian);
+    line-height: 1.15;
+    margin-bottom: 0;
+}
+
+/* ====================================================================
+   TABLE CARDS & DATA PRESENTATION
+   ==================================================================== */
+.table-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    margin-bottom: 1.75rem;
+}
+
+.table-card-header {
+    padding: 1.35rem 1.65rem;
+    border-bottom: 1px solid rgba(15, 118, 110, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    background: #FFFFFF;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
+.custom-table {
+    margin-bottom: 0;
+    width: 100%;
+    min-width: 620px;
+}
+
+.custom-table thead th {
+    background: #F8FAFC;
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.95rem 1.35rem;
+    border-bottom: 1px solid var(--border-subtle);
+    white-space: nowrap;
+}
+
+.custom-table tbody td {
+    padding: 1.05rem 1.35rem;
+    vertical-align: middle;
+    color: var(--dark-slate);
+    font-size: 0.93rem;
+    border-bottom: 1px solid #F1F5F9;
+    transition: background-color 0.2s ease;
+}
+
+.custom-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.custom-table tbody tr:hover td {
+    background: #F8FAFC;
+}
+
+/* ====================================================================
+   OFFICIAL VACCINATION CERTIFICATE STYLES
+   ==================================================================== */
+.certificate-box {
+    border: 3px double var(--primary-teal);
+    border-radius: var(--radius-xl);
+    padding: 3rem;
+    background: radial-gradient(circle at 50% 50%, #FFFFFF 0%, #F0FDF4 100%);
+    position: relative;
+    box-shadow: var(--shadow-card-hover);
+}
+
+.cert-stamp {
+    width: 95px;
+    height: 95px;
+    border: 2px dashed var(--primary-teal);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-teal);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-align: center;
+    transform: rotate(-10deg);
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.15);
+    flex-shrink: 0;
+}
+
+/* ====================================================================
+   RESPONSIVE BREAKPOINTS
+   ==================================================================== */
+@media (max-width: 1199.98px) {
+    .dashboard-topbar { padding: 0 1.35rem; }
+    .dashboard-content { padding: 1.35rem; }
+}
+
+@media (max-width: 991.98px) {
+    .dashboard-sidebar {
+        transform: translateX(-100%);
+        box-shadow: 0 0 50px rgba(9, 17, 30, 0.35);
+    }
+    .dashboard-sidebar.show { transform: translateX(0); }
+    .sidebar-close-btn { display: flex; }
+    .dashboard-main { margin-left: 0; width: 100%; }
+    .topbar-toggle { display: flex; }
+    .dashboard-content { padding: 1.25rem; }
+    .certificate-box { padding: 1.75rem; }
+}
+
+@media (max-width: 767.98px) {
+    .dashboard-topbar { padding: 0 1rem; height: 64px; }
+    .dashboard-content { padding: 0.95rem; }
+    .table-card-header { padding: 1.15rem; }
+    .dash-card { padding: 1.25rem; }
+    .dash-card-icon { width: 46px; height: 46px; font-size: 1.3rem; border-radius: 12px; }
+    .certificate-box { padding: 1.25rem; }
+}
+
+@media (max-width: 575.98px) {
+    .dashboard-sidebar { width: 85vw; max-width: 320px; }
+    .dash-card-value { font-size: 1.55rem; }
+}
