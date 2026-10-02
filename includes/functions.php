@@ -143,8 +143,10 @@ function generate_cert_code($child_name) {
  * Get Base URL path
  */
 function base_url($path = '') {
-    // Project root relative to document root
-    $root = '/09c/vcaccination-managment-system/';
+    $docRoot  = str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT']));
+    $projRoot = str_replace('\\', '/', realpath(__DIR__ . '/..'));
+    $rel  = trim(substr($projRoot, strlen($docRoot)), '/');
+    $root = $rel === '' ? '/' : '/' . $rel . '/';
     return $root . ltrim($path, '/');
 }
 ?>

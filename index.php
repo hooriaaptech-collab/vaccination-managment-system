@@ -1,9 +1,6 @@
 <?php
-/**
- * Main Home Page
- * E-Vaccination Management System
- * Luxury Healthcare Theme
- */
+//Main Home Page
+
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/auth.php';
