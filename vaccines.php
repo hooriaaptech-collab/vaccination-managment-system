@@ -45,29 +45,37 @@ require_once __DIR__ . '/includes/navbar.php';
         <span class="text-muted small">Updated in accordance with WHO & EPI Guidelines</span>
     </div>
 
-    <?php
-        // Simple color rotation so vaccine picture banners aren't all identical.
-        // (Just an array of gradients + icons — no external images needed, so
-        // everything still works even without internet during a live demo.)
-        $vaccine_banner_styles = [
-            ['bg' => 'linear-gradient(135deg,#7C3AED,#4C1D95)', 'icon' => 'bi-shield-plus'],
-            ['bg' => 'linear-gradient(135deg,#F59E0B,#B45309)', 'icon' => 'bi-droplet-fill'],
-            ['bg' => 'linear-gradient(135deg,#E11D48,#9F1239)', 'icon' => 'bi-capsule'],
-            ['bg' => 'linear-gradient(135deg,#4338CA,#312E81)', 'icon' => 'bi-syringe'],
-        ];
-    ?>
+    
     <div class="row g-4" id="vaccineCardsGrid">
         <?php if (!empty($vaccines)): ?>
             <?php foreach ($vaccines as $index => $vac): ?>
-                <?php $banner = $vaccine_banner_styles[$index % count($vaccine_banner_styles)]; ?>
+        
                 <div class="col-lg-4 col-md-6 vaccine-item-card">
                     <div class="card-3d p-4 h-100 d-flex flex-column justify-content-between bg-white">
                         <div>
                             <!-- Vaccine Picture Banner (gradient + icon, works offline) -->
-                            <div class="mb-3 d-flex align-items-center justify-content-center text-white"
-                                 style="height:120px; border-radius:14px; background:<?php echo $banner['bg']; ?>;">
-                                <i class="bi <?php echo $banner['icon']; ?>" style="font-size:2.8rem; opacity:0.9;"></i>
-                            </div>
+                            
+<!-- Vaccine Image from Admin Panel -->
+<div class="mb-3"
+     style="height:180px; border-radius:14px; background:#fff; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+
+    <?php if (!empty($vac['image'])): ?>
+
+        <img
+            src="<?php echo htmlspecialchars(base_url($vac['image'])); ?>"
+            alt="<?php echo htmlspecialchars($vac['vaccine_name']); ?>"
+            style="width:100%; height:100%; object-fit:contain;"
+        >
+
+    <?php else: ?>
+
+        <div class="text-muted small text-center p-3">
+            Vaccine image not uploaded yet
+        </div>
+
+    <?php endif; ?>
+
+</div>
 
                             <!-- Card Header -->
                             <div class="d-flex align-items-center justify-content-between mb-3">

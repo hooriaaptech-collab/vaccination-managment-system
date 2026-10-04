@@ -14,6 +14,49 @@ require_once __DIR__ . '/../includes/auth.php';
 
 require_role('admin');
 
+// Upload vaccine images (JPG, PNG, WEBP; maximum 5 MB)
+function uploadVaccineImage($fieldName = 'image') {
+    if (!isset($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] === UPLOAD_ERR_NO_FILE) {
+        return null; // No new image selected
+    }
+
+    if ($_FILES[$fieldName]['error'] !== UPLOAD_ERR_OK) {
+        return false;
+    }
+
+    if ($_FILES[$fieldName]['size'] > 5 * 1024 * 1024) {
+        return false;
+    }
+
+    $tmpPath = $_FILES[$fieldName]['tmp_name'];
+    $imageInfo = @getimagesize($tmpPath);
+    if ($imageInfo === false) {
+        return false;
+    }
+
+    $allowedTypes = [
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/webp' => 'webp'
+    ];
+    $mimeType = $imageInfo['mime'] ?? '';
+    if (!isset($allowedTypes[$mimeType])) {
+        return false;
+    }
+
+    $uploadFolder = __DIR__ . '/../uploads/vaccines/';
+    if (!is_dir($uploadFolder) && !mkdir($uploadFolder, 0755, true) && !is_dir($uploadFolder)) {
+        return false;
+    }
+
+    $fileName = 'vaccine_' . bin2hex(random_bytes(8)) . '.' . $allowedTypes[$mimeType];
+    if (!move_uploaded_file($tmpPath, $uploadFolder . $fileName)) {
+        return false;
+    }
+
+    return 'uploads/vaccines/' . $fileName;
+}
+
 // Handle Add / Edit / Delete POST requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = sanitize($_POST['action'] ?? '');
@@ -31,11 +74,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($vaccine_name) || empty($short_code) || empty($target_disease) || empty($recommended_age)) {
             set_flash('danger', 'Please fill in all required vaccine fields.');
         } else {
+            $imagePath = uploadVaccineImage('image');
+            if ($imagePath === false) {
+                set_flash('danger', 'Image upload failed. Please use JPG, PNG, or WEBP under 5 MB.');
+                header("Location: vaccines.php");
+                exit();
+            }
+
             $stmt = $pdo->prepare("
-                INSERT INTO vaccines (vaccine_name, short_code, description, target_disease, recommended_age, doses_required, interval_days, status) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO vaccines (vaccine_name, short_code, description, target_disease, recommended_age, doses_required, interval_days, status, image) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
-            if ($stmt->execute([$vaccine_name, $short_code, $description, $target_disease, $recommended_age, $doses_required, $interval_days, $status])) {
+            if ($stmt->execute([$vaccine_name, $short_code, $description, $target_disease, $recommended_age, $doses_required, $interval_days, $status, $imagePath])) {
                 $vac_id = $pdo->lastInsertId();
                 // Associate with all existing hospitals
                 $h_stmt = $pdo->query("SELECT id FROM hospitals");
@@ -63,12 +113,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $status = sanitize($_POST['status'] ?? 'Available');
 
         if ($id > 0 && !empty($vaccine_name)) {
-            $stmt = $pdo->prepare("
-                UPDATE vaccines 
-                SET vaccine_name = ?, short_code = ?, description = ?, target_disease = ?, recommended_age = ?, doses_required = ?, interval_days = ?, status = ?
-                WHERE id = ?
-            ");
-            if ($stmt->execute([$vaccine_name, $short_code, $description, $target_disease, $recommended_age, $doses_required, $interval_days, $status, $id])) {
+            $imagePath = uploadVaccineImage('image');
+            if ($imagePath === false) {
+                set_flash('danger', 'Image upload failed. Please use JPG, PNG, or WEBP under 5 MB.');
+                header("Location: vaccines.php");
+                exit();
+            }
+
+            if ($imagePath !== null) {
+                $stmt = $pdo->prepare("
+                    UPDATE vaccines
+                    SET vaccine_name = ?, short_code = ?, description = ?, target_disease = ?, recommended_age = ?, doses_required = ?, interval_days = ?, status = ?, image = ?
+                    WHERE id = ?
+                ");
+                $updateValues = [$vaccine_name, $short_code, $description, $target_disease, $recommended_age, $doses_required, $interval_days, $status, $imagePath, $id];
+            } else {
+                $stmt = $pdo->prepare("
+                    UPDATE vaccines
+                    SET vaccine_name = ?, short_code = ?, description = ?, target_disease = ?, recommended_age = ?, doses_required = ?, interval_days = ?, status = ?
+                    WHERE id = ?
+                ");
+                $updateValues = [$vaccine_name, $short_code, $description, $target_disease, $recommended_age, $doses_required, $interval_days, $status, $id];
+            }
+
+            if ($stmt->execute($updateValues)) {
                 set_flash('success', 'Vaccine details updated successfully.');
             } else {
                 set_flash('danger', 'Failed to update vaccine.');
@@ -152,6 +220,10 @@ require_once __DIR__ . '/../includes/header.php';
                                 <?php foreach ($vaccines as $vac): ?>
                                     <tr>
                                         <td>
+                                            <?php if (!empty($vac['image'])): ?>
+                                                <img src="<?php echo htmlspecialchars(base_url($vac['image'])); ?>" alt="<?php echo htmlspecialchars($vac['vaccine_name']); ?>" style="width:54px;height:54px;object-fit:contain;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:6px;background:#fff;">
+                                            <?php endif; ?>
+                                            <br>
                                             <span class="badge bg-light text-teal border fw-bold mb-1"><?php echo htmlspecialchars($vac['short_code']); ?></span>
                                             <div class="fw-bold text-dark"><?php echo htmlspecialchars($vac['vaccine_name']); ?></div>
                                             <div class="text-muted small" style="max-width: 280px;"><?php echo htmlspecialchars(substr($vac['description'], 0, 75)) . '...'; ?></div>
@@ -199,7 +271,7 @@ require_once __DIR__ . '/../includes/header.php';
                                             <div class="modal fade" id="editVaccineModal<?php echo $vac['id']; ?>" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered modal-lg">
                                                     <div class="modal-content">
-                                                        <form action="vaccines.php" method="POST">
+                                                        <form action="vaccines.php" method="POST" enctype="multipart/form-data">
                                                             <input type="hidden" name="action" value="edit">
                                                             <input type="hidden" name="id" value="<?php echo $vac['id']; ?>">
                                                             <div class="modal-header">
@@ -243,6 +315,14 @@ require_once __DIR__ . '/../includes/header.php';
                                                                         <label class="form-label fw-semibold small text-dark">Description & Medical Notes</label>
                                                                         <textarea name="description" class="form-control" rows="3"><?php echo htmlspecialchars($vac['description']); ?></textarea>
                                                                     </div>
+                                                                    <div class="col-12">
+                                                                        <label class="form-label fw-semibold small text-dark">Vaccine Image (JPG, PNG, WEBP; max 5 MB)</label>
+                                                                        <?php if (!empty($vac['image'])): ?>
+                                                                            <div class="mb-2"><img src="<?php echo htmlspecialchars(base_url($vac['image'])); ?>" alt="Current vaccine image" style="width:100px;height:80px;object-fit:contain;border:1px solid #ddd;border-radius:8px;background:#fff;"></div>
+                                                                        <?php endif; ?>
+                                                                        <input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                                                                        <div class="form-text">Choose a new image only if you want to replace the current one.</div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer bg-light">
@@ -276,7 +356,7 @@ require_once __DIR__ . '/../includes/header.php';
 <div class="modal fade" id="addVaccineModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <form action="vaccines.php" method="POST">
+            <form action="vaccines.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="add">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-plus-circle text-teal me-2"></i> Add New Vaccine to Master Catalog</h5>
@@ -319,6 +399,10 @@ require_once __DIR__ . '/../includes/header.php';
                             <label class="form-label fw-semibold small text-dark">Description & Medical Details</label>
                             <textarea name="description" class="form-control" rows="3" placeholder="Clinical explanation, contraindications, and immunization benefits..."></textarea>
                         </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark">Vaccine Image (JPG, PNG, WEBP; max 5 MB)</label>
+                            <input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
@@ -327,9 +411,8 @@ require_once __DIR__ . '/../includes/header.php';
                 </div>
             </form>
         </div>
-        <?php require_once __DIR__ . '/../includes/footer.php'; ?>
     </div>
 </div>
 
-
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>
 

@@ -110,31 +110,6 @@ require_once __DIR__ . '/includes/navbar.php';
                     </button>
                 </form>
 
-                <!-- Demo Quick Fill Accordion (Great for College Evaluation) -->
-                <div class="accordion accordion-flush mt-3 border rounded-3 p-2 bg-light" id="demoAccordion">
-                    <div class="accordion-item bg-transparent">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed bg-transparent py-2 px-1 small fw-bold text-teal shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#demoAccounts">
-                                <i class="bi bi-key-fill me-1"></i> Quick Demo Login Credentials (Click to view)
-                            </button>
-                        </h2>
-                        <div id="demoAccounts" class="accordion-collapse collapse" data-bs-parent="#demoAccordion">
-                            <div class="accordion-body px-1 py-2 small">
-                                <div class="d-flex flex-column gap-2">
-                                    <button type="button" class="btn btn-outline-danger btn-sm text-start py-1" onclick="fillLogin('admin@evaccine.com', 'Admin@123')">
-                                        <strong>Admin:</strong> admin@evaccine.com / Admin@123
-                                    </button>
-                                    <button type="button" class="btn btn-outline-success btn-sm text-start py-1" onclick="fillLogin('sarah.jenkins@gmail.com', 'Parent@123')">
-                                        <strong>Parent:</strong> sarah.jenkins@gmail.com / Parent@123
-                                    </button>
-                                    <button type="button" class="btn btn-outline-primary btn-sm text-start py-1" onclick="fillLogin('contact@citygeneral.org', 'Hospital@123')">
-                                        <strong>Hospital:</strong> contact@citygeneral.org / Hospital@123
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Registration Link -->
                 <div class="text-center mt-4 pt-3 border-top">

@@ -14,6 +14,48 @@ require_once __DIR__ . '/../includes/auth.php';
 
 require_role('admin');
 
+// Upload one unique image per hospital. Returns the new filename.
+function uploadHospitalImage(array $file): string {
+    if (!isset($file['error']) || $file['error'] === UPLOAD_ERR_NO_FILE) {
+        return '';
+    }
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        throw new RuntimeException('Image upload failed. Please try again.');
+    }
+    if (($file['size'] ?? 0) > 5 * 1024 * 1024) {
+        throw new RuntimeException('Hospital image must be 5 MB or smaller.');
+    }
+
+    $extension = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'jfif'];
+    if (!in_array($extension, $allowedExtensions, true)) {
+        throw new RuntimeException('Please upload a JPG, JPEG, PNG, WEBP or JFIF image.');
+    }
+
+    if (!is_uploaded_file($file['tmp_name'] ?? '')) {
+        throw new RuntimeException('Invalid uploaded image.');
+    }
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = $finfo ? finfo_file($finfo, $file['tmp_name']) : '';
+    if ($finfo) finfo_close($finfo);
+    if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true)) {
+        throw new RuntimeException('The selected file is not a supported image.');
+    }
+
+    $uploadDir = __DIR__ . '/../uploads/hospitals/';
+    if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+        throw new RuntimeException('Could not create uploads/hospitals folder.');
+    }
+
+    // Random suffix prevents different hospitals from overwriting each other.
+    $safeExtension = ($extension === 'jfif') ? 'jpg' : $extension;
+    $filename = 'hospital_' . date('Ymd_His') . '_' . bin2hex(random_bytes(6)) . '.' . $safeExtension;
+    if (!move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
+        throw new RuntimeException('Could not save the uploaded hospital image.');
+    }
+    return $filename;
+}
+
 // Handle Add / Edit / Delete POST requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = sanitize($_POST['action'] ?? '');
@@ -27,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $location = sanitize($_POST['location'] ?? '');
         $operating_hours = sanitize($_POST['operating_hours'] ?? '08:00 AM - 05:00 PM');
         $password = $_POST['password'] ?? 'Hospital@123';
+        $image_name = '';
 
         if (empty($hospital_name) || empty($email) || empty($phone) || empty($address)) {
             set_flash('danger', 'Please fill in all required hospital details.');
@@ -39,13 +82,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $pdo->beginTransaction();
                 try {
+                    if (isset($_FILES['image']) && ($_FILES['image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+                        $image_name = uploadHospitalImage($_FILES['image']);
+                    }
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                     $u_ins = $pdo->prepare("INSERT INTO users (name, email, phone, password, role, status) VALUES (?, ?, ?, ?, 'hospital', 'active')");
                     $u_ins->execute([$hospital_name, $email, $phone, $hashed_password]);
                     $user_id = $pdo->lastInsertId();
 
-                    $h_ins = $pdo->prepare("INSERT INTO hospitals (user_id, hospital_name, email, phone, address, city, location, operating_hours, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active')");
-                    $h_ins->execute([$user_id, $hospital_name, $email, $phone, $address, $city, $location, $operating_hours]);
+                    $h_ins = $pdo->prepare("INSERT INTO hospitals (user_id, hospital_name, email, phone, address, city, location, operating_hours, image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')");
+                    $h_ins->execute([$user_id, $hospital_name, $email, $phone, $address, $city, $location, $operating_hours, $image_name ?: null]);
                     $hospital_id = $pdo->lastInsertId();
 
                     // Seed standard vaccines
@@ -77,17 +123,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $operating_hours = sanitize($_POST['operating_hours'] ?? '');
         $status = sanitize($_POST['status'] ?? 'active');
 
-        if ($id > 0 && !empty($hospital_name)) {
-            $stmt = $pdo->prepare("
-                UPDATE hospitals 
-                SET hospital_name = ?, email = ?, phone = ?, address = ?, city = ?, location = ?, operating_hours = ?, status = ?
-                WHERE id = ?
-            ");
-            if ($stmt->execute([$hospital_name, $email, $phone, $address, $city, $location, $operating_hours, $status, $id])) {
-                set_flash('success', 'Hospital facility updated successfully.');
-            } else {
-                set_flash('danger', 'Failed to update hospital.');
+        if ($id > 0 && !empty($hospital_name) && !empty($email) && !empty($phone) && !empty($address)) {
+            try {
+                $oldStmt = $pdo->prepare("SELECT image, user_id FROM hospitals WHERE id = ? LIMIT 1");
+                $oldStmt->execute([$id]);
+                $oldHospital = $oldStmt->fetch(PDO::FETCH_ASSOC);
+                if (!$oldHospital) {
+                    throw new RuntimeException('Hospital not found.');
+                }
+
+                $image_name = $oldHospital['image'] ?? '';
+                if (isset($_FILES['image']) && ($_FILES['image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+                    $newImage = uploadHospitalImage($_FILES['image']);
+                    $image_name = $newImage;
+                }
+
+                $pdo->beginTransaction();
+                $stmt = $pdo->prepare("UPDATE hospitals SET hospital_name = ?, email = ?, phone = ?, address = ?, city = ?, location = ?, operating_hours = ?, status = ?, image = ? WHERE id = ?");
+                $stmt->execute([$hospital_name, $email, $phone, $address, $city, $location, $operating_hours, $status, $image_name ?: null, $id]);
+
+                // Keep the linked login account's contact details in sync.
+                $uStmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ? WHERE id = ?");
+                $uStmt->execute([$hospital_name, $email, $phone, $oldHospital['user_id']]);
+                $pdo->commit();
+                set_flash('success', 'Hospital details and image updated successfully.');
+            } catch (Throwable $ex) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                set_flash('danger', 'Failed to update hospital: ' . $ex->getMessage());
             }
+        } else {
+            set_flash('danger', 'Please fill in all required hospital details.');
         }
         header("Location: hospitals.php");
         exit();
@@ -159,6 +224,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <table class="table table-hover custom-table">
                         <thead>
                             <tr>
+                                <th>Image</th>
                                 <th>Hospital Name & Location</th>
                                 <th>Contact Information</th>
                                 <th>Operating Hours</th>
@@ -170,6 +236,16 @@ require_once __DIR__ . '/../includes/header.php';
                             <?php if (!empty($hospitals)): ?>
                                 <?php foreach ($hospitals as $hosp): ?>
                                     <tr>
+                                        <td style="width:100px;">
+                                            <?php
+                                                $adminDefaultImage = base_url('assets/images/hospital-default.jpg');
+                                                $adminHospitalImage = $adminDefaultImage;
+                                                if (!empty($hosp['image']) && is_file(__DIR__ . '/../uploads/hospitals/' . basename($hosp['image']))) {
+                                                    $adminHospitalImage = base_url('uploads/hospitals/' . rawurlencode(basename($hosp['image'])));
+                                                }
+                                            ?>
+                                            <img src="<?php echo htmlspecialchars($adminHospitalImage, ENT_QUOTES, 'UTF-8'); ?>" alt="Hospital image" style="width:76px;height:58px;object-fit:cover;border-radius:8px;" onerror="this.onerror=null;this.src='<?php echo htmlspecialchars($adminDefaultImage, ENT_QUOTES, 'UTF-8'); ?>';">
+                                        </td>
                                         <td>
                                             <div class="fw-bold text-dark"><?php echo htmlspecialchars($hosp['hospital_name']); ?></div>
                                             <div class="text-muted small">
@@ -219,7 +295,7 @@ require_once __DIR__ . '/../includes/header.php';
                                             <div class="modal fade" id="editHospitalModal<?php echo $hosp['id']; ?>" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered modal-lg">
                                                     <div class="modal-content">
-                                                        <form action="hospitals.php" method="POST">
+                                                        <form action="hospitals.php" method="POST" enctype="multipart/form-data">
                                                             <input type="hidden" name="action" value="edit">
                                                             <input type="hidden" name="id" value="<?php echo $hosp['id']; ?>">
                                                             <div class="modal-header">
@@ -260,6 +336,14 @@ require_once __DIR__ . '/../includes/header.php';
                                                                         <input type="text" name="location" class="form-control" value="<?php echo htmlspecialchars($hosp['location']); ?>">
                                                                     </div>
                                                                     <div class="col-12">
+                                                                        <label class="form-label fw-semibold small text-dark">Change Hospital Image</label>
+                                                                        <input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png,.webp,.jfif,image/jpeg,image/png,image/webp">
+                                                                        <small class="text-muted d-block mt-1">Optional — JPG, JPEG, PNG, WEBP or JFIF; maximum 5 MB. Leave empty to keep the current image.</small>
+                                                                        <?php if (!empty($hosp['image']) && is_file(__DIR__ . '/../uploads/hospitals/' . basename($hosp['image']))): ?>
+                                                                            <img class="mt-2" src="<?php echo htmlspecialchars(base_url('uploads/hospitals/' . rawurlencode(basename($hosp['image']))), ENT_QUOTES, 'UTF-8'); ?>" alt="Current hospital image" style="width:120px;height:80px;object-fit:cover;border-radius:8px;">
+                                                                        <?php endif; ?>
+                                                                    </div>
+                                                                    <div class="col-12">
                                                                         <label class="form-label fw-semibold small text-dark">Street Address <span class="text-danger">*</span></label>
                                                                         <textarea name="address" class="form-control" rows="2" required><?php echo htmlspecialchars($hosp['address']); ?></textarea>
                                                                     </div>
@@ -278,7 +362,7 @@ require_once __DIR__ . '/../includes/header.php';
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-muted">
+                                    <td colspan="6" class="text-center py-5 text-muted">
                                         No hospital centers found. Click "Add Hospital Center" to create one.
                                     </td>
                                 </tr>
@@ -296,7 +380,7 @@ require_once __DIR__ . '/../includes/header.php';
 <div class="modal fade" id="addHospitalModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <form action="hospitals.php" method="POST">
+            <form action="hospitals.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="add">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-building-add text-teal me-2"></i> Register New Hospital Center</h5>
@@ -336,6 +420,11 @@ require_once __DIR__ . '/../includes/header.php';
                             <label class="form-label fw-semibold small text-dark">Full Physical Address <span class="text-danger">*</span></label>
                             <textarea name="address" class="form-control" rows="2" placeholder="Street address, building number, area..." required></textarea>
                         </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark">Hospital / Clinic Image</label>
+                            <input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png,.webp,.jfif,image/jpeg,image/png,image/webp">
+                            <small class="text-muted d-block mt-1">Optional — JPG, JPEG, PNG, WEBP or JFIF; maximum 5 MB.</small>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
@@ -344,9 +433,8 @@ require_once __DIR__ . '/../includes/header.php';
                 </div>
             </form>
         </div>
-        <?php require_once __DIR__ . '/../includes/footer.php'; ?>
     </div>
 </div>
 
-
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>
 

@@ -160,19 +160,86 @@ require_once __DIR__ . '/includes/navbar.php';
                     </div>
                 <?php endif; ?>
 
-                <!-- Role Selection Tabs (Parent vs Hospital) -->
-                <ul class="nav nav-pills nav-fill mb-4 p-1 bg-light rounded-3 border" id="registerTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-3 fw-bold <?php echo ($active_tab === 'parent') ? 'active bg-emerald text-white' : 'text-dark'; ?>" id="parent-tab" data-bs-toggle="tab" data-bs-target="#parentTabContent" type="button" role="tab">
-                            <i class="bi bi-person-heart me-1.5"></i> Parent Registration
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-3 fw-bold <?php echo ($active_tab === 'hospital') ? 'active bg-emerald text-white' : 'text-dark'; ?>" id="hospital-tab" data-bs-toggle="tab" data-bs-target="#hospitalTabContent" type="button" role="tab">
-                            <i class="bi bi-hospital me-1.5"></i> Hospital / Clinic Registration
-                        </button>
-                    </li>
-                </ul>
+               
+<style>
+    #registerTabs {
+        background: #ECFDF5 !important;
+        border: 1px solid #D1FAE5 !important;
+    }
+
+    #registerTabs .nav-link {
+        background: transparent !important;
+        color: #065F46 !important;
+        border: 1px solid transparent !important;
+        border-radius: 10px !important;
+        transition: background 0.3s ease, color 0.3s ease,
+                    box-shadow 0.3s ease !important;
+    }
+
+    #registerTabs .nav-link.active {
+        background: linear-gradient(135deg, #064E3B, #0F766E) !important;
+        color: #FFFFFF !important;
+        border-color: #0F766E !important;
+        box-shadow: 0 4px 12px rgba(6, 78, 59, 0.22) !important;
+    }
+
+    #registerTabs .nav-link:not(.active):hover {
+        background: #D1FAE5 !important;
+        color: #064E3B !important;
+    }
+</style>
+
+<ul class="nav nav-pills nav-fill mb-4 p-1 rounded-3 border"
+    id="registerTabs" role="tablist">
+
+    <li class="nav-item" role="presentation">
+        <button
+            class="nav-link rounded-3 fw-bold <?php echo ($active_tab === 'parent') ? 'active' : ''; ?>"
+            id="parent-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#parentTabContent"
+            type="button"
+            role="tab"
+            aria-controls="parentTabContent"
+            aria-selected="<?php echo ($active_tab === 'parent') ? 'true' : 'false'; ?>">
+            <i class="bi bi-person-heart me-1"></i>
+            Parent Registration
+        </button>
+    </li>
+
+    <li class="nav-item" role="presentation">
+        <button
+            class="nav-link rounded-3 fw-bold <?php echo ($active_tab === 'hospital') ? 'active' : ''; ?>"
+            id="hospital-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#hospitalTabContent"
+            type="button"
+            role="tab"
+            aria-controls="hospitalTabContent"
+            aria-selected="<?php echo ($active_tab === 'hospital') ? 'true' : 'false'; ?>">
+            <i class="bi bi-hospital me-1"></i>
+            Hospital / Clinic Registration
+        </button>
+    </li>
+
+</ul>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tabs = document.querySelectorAll('#registerTabs button[data-bs-toggle="tab"]');
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener('shown.bs.tab', function () {
+            tabs.forEach(function (item) {
+                item.setAttribute(
+                    'aria-selected',
+                    item.classList.contains('active') ? 'true' : 'false'
+                );
+            });
+        });
+    });
+});
+</script>
 
                 <div class="tab-content" id="registerTabsContent">
                     <!-- PARENT REGISTRATION TAB -->

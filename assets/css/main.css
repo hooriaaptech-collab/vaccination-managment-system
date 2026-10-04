@@ -325,11 +325,13 @@ a:hover {
 }
 
 .hero-title span.highlight {
-    background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--primary-teal) 40%, var(--accent-cyan) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    display: inline;
+    background: none !important;
+    color: #0F766E !important;
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: #0F766E !important;
+    position: relative;
 }
-
 .hero-sub {
     font-size: clamp(1.05rem, 2.4vw, 1.2rem);
     color: var(--dark-muted);
