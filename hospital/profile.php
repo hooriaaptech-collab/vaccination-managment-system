@@ -1,8 +1,5 @@
 <?php
-/**
- * Hospital Profile & Facility Settings
- * E-Vaccination Management System
- */
+
 
 $page_title = 'Hospital Profile';
 $page_header = 'Hospital Facility Settings';

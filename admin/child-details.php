@@ -1,8 +1,5 @@
 <?php
-/**
- * Admin Child Details & Immunization Record Profile
- * E-Vaccination Management System
- */
+
 $page_title = 'Child Profile';
 $page_header = 'Child Immunization Profile';
 $page_subheader = 'Comprehensive health records, parental details, and vaccination timeline';

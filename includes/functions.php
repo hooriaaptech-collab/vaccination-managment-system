@@ -1,17 +1,10 @@
 <?php
-/**
- * Common Helper Functions
- * E-Vaccination Management System
- */
 
-// Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/**
- * Sanitize User Input
- */
+
 function sanitize($data) {
     if (is_array($data)) {
         return array_map('sanitize', $data);
@@ -19,10 +12,7 @@ function sanitize($data) {
     return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
 }
 
-/**
- * Set a Flash Message (for alerts/notifications)
- * Types: success, danger, warning, info
- */
+
 function set_flash($type, $message) {
     $_SESSION['flash'] = [
         'type' => $type,
@@ -30,9 +20,7 @@ function set_flash($type, $message) {
     ];
 }
 
-/**
- * Display Flash Message if present and clear it
- */
+
 function display_flash() {
     if (isset($_SESSION['flash'])) {
         $flash = $_SESSION['flash'];
@@ -52,9 +40,7 @@ function display_flash() {
     }
 }
 
-/**
- * Format Date to standard readable format (e.g. 15 Oct, 2026)
- */
+
 function format_date($date_string) {
     if (empty($date_string) || $date_string === '0000-00-00') {
         return 'N/A';
@@ -62,9 +48,7 @@ function format_date($date_string) {
     return date('d M, Y', strtotime($date_string));
 }
 
-/**
- * Calculate Age from Date of Birth
- */
+
 function calculate_age($dob) {
     if (empty($dob)) return 'N/A';
     
@@ -81,9 +65,7 @@ function calculate_age($dob) {
     }
 }
 
-/**
- * Generate Status Badge HTML
- */
+
 function status_badge($status) {
     $status = trim($status);
     $class = 'badge ';
@@ -123,25 +105,19 @@ function status_badge($status) {
     return '<span class="' . $class . ' px-2.5 py-1.5 rounded-pill fw-medium d-inline-flex align-items-center">' . $icon . htmlspecialchars($status) . '</span>';
 }
 
-/**
- * Generate Unique Booking Code
- */
+
 function generate_booking_code() {
     return 'EVAC-' . date('Y') . '-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 4));
 }
 
-/**
- * Generate Certificate Verification Code
- */
+
 function generate_cert_code($child_name) {
     $prefix = strtoupper(substr(preg_replace('/[^a-zA-Z]/', '', $child_name), 0, 3));
     if (strlen($prefix) < 3) $prefix = 'VAC';
     return 'CERT-' . $prefix . '-' . date('Y') . '-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 5));
 }
 
-/**
- * Get Base URL path
- */
+
 function base_url($path = '') {
     $docRoot  = str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT']));
     $projRoot = str_replace('\\', '/', realpath(__DIR__ . '/..'));

@@ -1,8 +1,5 @@
 <?php
-/**
- * Hospital Administered Vaccination Records Log
- * E-Vaccination Management System
- */
+
 $page_title = 'Administered Records';
 $page_header = 'Administered Vaccination Records Log';
 $page_subheader = 'Historical record of all immunization shots administered at this medical center';

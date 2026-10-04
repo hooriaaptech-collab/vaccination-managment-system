@@ -1,8 +1,5 @@
 <?php
-/**
- * Parent Children List Management
- * E-Vaccination Management System
- */
+
 $page_title = 'My Children';
 $page_header = 'My Children Profiles';
 $page_subheader = 'Manage and track immunization records for each registered child';

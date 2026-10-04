@@ -1,8 +1,5 @@
 <?php
-/**
- * Parent Hospital Search & Selection
- * E-Vaccination Management System
- */
+
 $page_title = 'Search Hospitals';
 $page_header = 'Partner Hospital Directory';
 $page_subheader = 'Discover nearby verified clinics and pediatric centers to schedule your child’s vaccination';

@@ -1,8 +1,5 @@
 <?php
-/**
- * Admin Hospital Management (Full CRUD)
- * E-Vaccination Management System
- */
+
 $page_title = 'Hospital Management';
 $page_header = 'Authorized Hospitals & Clinics';
 $page_subheader = 'Manage authorized immunization facilities, center locations, and contact records';

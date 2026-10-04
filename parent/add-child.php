@@ -1,8 +1,5 @@
 <?php
-/**
- * Parent Add Child Form
- * E-Vaccination Management System
- */
+
 $page_title = 'Add Child';
 $page_header = 'Register Child Profile';
 $page_subheader = 'Enter your child’s birth details to generate an automated immunization timeline';

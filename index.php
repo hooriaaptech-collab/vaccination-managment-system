@@ -33,9 +33,9 @@ require_once __DIR__ . '/includes/header.php';
 require_once __DIR__ . '/includes/navbar.php';
 ?>
 
-<!-- ====================================================================
-     HERO SECTION
-     ==================================================================== -->
+
+    <!-- HERO SECTION-->
+    
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center">
@@ -165,9 +165,9 @@ require_once __DIR__ . '/includes/navbar.php';
     </div>
 </section>
 
-<!-- ====================================================================
+<!-- 
      LIVE STATS COUNTERS (Glass Surface Bar)
-     ==================================================================== -->
+     -->
 <section class="py-4 bg-white border-top border-bottom">
     <div class="container">
         <div class="row g-4 text-center">

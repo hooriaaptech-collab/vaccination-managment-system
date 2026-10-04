@@ -1,8 +1,5 @@
 <?php
-/**
- * Parent Edit Child Information
- * E-Vaccination Management System
- */
+
 $page_title = 'Edit Child';
 $page_header = 'Update Child Information';
 $page_subheader = 'Modify registered child records and vitals';

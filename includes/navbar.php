@@ -1,13 +1,10 @@
 <?php
-/**
- * Public Navbar Template
- * E-Vaccination Management System
- */
+
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <nav class="navbar navbar-expand-lg main-navbar sticky-top">
     <div class="container">
-        <!-- Brand Logo -->
+       
         <a class="navbar-brand" href="<?php echo base_url('index.php'); ?>">
             <div class="brand-icon">
                 <i class="bi bi-shield-plus"></i>
@@ -15,12 +12,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span>E-Vaccination</span>
         </a>
 
-        <!-- Mobile Toggler -->
         <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Navbar Links -->
+  
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1">
                 <li class="nav-item">
@@ -46,7 +42,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </li>
             </ul>
 
-            <!-- Auth Buttons / User State -->
+            
             <div class="d-flex align-items-center gap-2">
                 <?php if (is_logged_in()): ?>
                     <?php 

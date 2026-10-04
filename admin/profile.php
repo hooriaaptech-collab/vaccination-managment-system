@@ -1,8 +1,5 @@
 <?php
-/**
- * Admin Profile & Account Settings
- * E-Vaccination Management System
- */
+
 $page_title = 'Account Settings';
 $page_header = 'Admin Account Settings';
 $page_subheader = 'Update administrator profile and change password';

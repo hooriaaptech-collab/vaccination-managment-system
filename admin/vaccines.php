@@ -1,8 +1,5 @@
 <?php
-/**
- * Admin Vaccine Management (Full CRUD)
- * E-Vaccination Management System
- */
+
 $page_title = 'Vaccine Management';
 $page_header = 'Master Vaccine Catalog & Inventory';
 $page_subheader = 'Add, edit, delete, and configure availability of standard childhood vaccines';

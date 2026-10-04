@@ -1,8 +1,5 @@
 <?php
-/**
- * Hospital Portal Dashboard
- * E-Vaccination Management System
- */
+
 $page_title = 'Hospital Dashboard';
 $page_header = 'Hospital Clinical Dashboard';
 $page_subheader = 'Manage daily vaccination appointments, stock availability, and immunization records';

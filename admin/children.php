@@ -1,8 +1,5 @@
 <?php
-/**
- * Admin Child Management
- * E-Vaccination Management System
- */
+
 $page_title = 'Child Management';
 $page_header = 'Registered Children Registry';
 $page_subheader = 'Search, manage, view vaccination progress, and update profiles of registered children';

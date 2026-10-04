@@ -1,23 +1,15 @@
 <?php
-/**
- * Authentication and Role Guard Helper
- * E-Vaccination Management System
- */
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/**
- * Check if a user is currently logged in
- */
+
 function is_logged_in() {
     return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
 
-/**
- * Get current logged in user details
- */
+
 function current_user_id() {
     return $_SESSION['user_id'] ?? null;
 }
@@ -34,9 +26,7 @@ function current_user_email() {
     return $_SESSION['user_email'] ?? '';
 }
 
-/**
- * Require user to be logged in
- */
+
 function require_login($redirect_to = null) {
     if (!is_logged_in()) {
         if (function_exists('set_flash')) {
@@ -48,9 +38,7 @@ function require_login($redirect_to = null) {
     }
 }
 
-/**
- * Require specific role(s) (e.g. 'admin', 'parent', 'hospital')
- */
+
 function require_role($allowed_roles) {
     require_login();
     
@@ -69,9 +57,7 @@ function require_role($allowed_roles) {
     }
 }
 
-/**
- * Redirect user to their respective dashboard based on role
- */
+
 function redirect_by_role($role) {
     switch ($role) {
         case 'admin':

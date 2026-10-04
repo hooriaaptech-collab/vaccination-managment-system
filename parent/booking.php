@@ -1,8 +1,5 @@
 <?php
-/**
- * Parent Vaccination Booking & Appointment Request
- * E-Vaccination Management System
- */
+
 $page_title = 'Book Appointment';
 $page_header = 'Schedule Vaccination Appointment';
 $page_subheader = 'Submit a vaccination request for your child at an authorized hospital center';

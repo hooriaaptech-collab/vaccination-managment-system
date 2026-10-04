@@ -1,8 +1,5 @@
 <?php
-/**
- * Admin Parent Appointment Requests Management
- * E-Vaccination Management System
- */
+
 $page_title = 'Parent Requests';
 $page_header = 'Parent Appointment Requests';
 $page_subheader = 'Review, approve, or reject vaccination appointment requests submitted by parents';

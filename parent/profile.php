@@ -1,8 +1,5 @@
 <?php
-/**
- * Parent Profile & Security Settings
- * E-Vaccination Management System
- */
+
 $page_title = 'My Profile';
 $page_header = 'Parent Account Settings';
 $page_subheader = 'Manage your contact details, emergency phone number, and account password';

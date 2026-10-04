@@ -1,8 +1,5 @@
 <?php
-/**
- * Admin Reports & Immunization Analytics
- * E-Vaccination Management System
- */
+
 $page_title = 'Reports & Analytics';
 $page_header = 'Immunization Reports & Analytics';
 $page_subheader = 'Generate date-wise, child-wise, vaccine-wise, and hospital-wise vaccination audit reports';

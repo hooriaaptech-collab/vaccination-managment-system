@@ -1,17 +1,12 @@
 <?php
-/**
- * Unified Dashboard Sidebar Include
- * Dynamically renders navigation based on current role (Admin, Parent, Hospital)
- * Fully Responsive with Mobile Drawer & Backdrop
- * E-Vaccination Management System
- */
+
 
 $user_role = current_user_role();
 $user_name = current_user_name();
 $current_page = basename($_SERVER['PHP_SELF']);
 $current_dir = basename(dirname($_SERVER['PHP_SELF']));
 ?>
-<!-- Mobile Backdrop Overlay -->
+
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
 <aside class="dashboard-sidebar" id="dashboardSidebar">

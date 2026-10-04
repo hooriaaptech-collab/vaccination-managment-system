@@ -1,8 +1,5 @@
 <?php
-/**
- * Hospital Appointment Management & Vaccination Status Update
- * E-Vaccination Management System
- */
+
 $page_title = 'Hospital Appointments';
 $page_header = 'Clinical Appointments & Status Updates';
 $page_subheader = 'Administer vaccines and record digital immunization certificates for scheduled patients';

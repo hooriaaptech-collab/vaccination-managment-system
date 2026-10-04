@@ -1,8 +1,5 @@
 <?php
-/**
- * Admin Master Bookings Management & Audit
- * E-Vaccination Management System
- */
+
 $page_title = 'Master Bookings';
 $page_header = 'All System Bookings & Appointments';
 $page_subheader = 'Comprehensive list of all parent bookings across hospital facilities';

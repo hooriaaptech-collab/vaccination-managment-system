@@ -1,20 +1,14 @@
 <?php
-/**
- * Database Configuration & Connection File
- * E-Vaccination Management System
- */
-
-// Define database constants
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'vaccination_management_system');
 define('DB_PORT', '3306');
 
-// Set default timezone
+
 date_default_timezone_set('Asia/Karachi');
 
-// Database Connection with PDO
+
 try {
     $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
     $options = [
@@ -24,10 +18,10 @@ try {
     ];
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
 } catch (PDOException $e) {
-    // If the database does not exist yet or connection fails, show a user-friendly setup guide
+   
     $error_message = $e->getMessage();
     
-    // Check if error is "Unknown database"
+    
     if (strpos($error_message, 'Unknown database') !== false) {
         die("
         <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 25px; border: 1px solid #e0e0e0; border-radius: 12px; background: #fff8f8; box-shadow: 0 4px 15px rgba(0,0,0,0.05);'>

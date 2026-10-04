@@ -1,8 +1,5 @@
 <?php
-/**
- * Hospital Vaccine Inventory & Stock Availability Management
- * E-Vaccination Management System
- */
+
 $page_title = 'Vaccine Stock';
 $page_header = 'Vaccine Inventory & Availability';
 $page_subheader = 'Manage and update real-time vaccine stock availability at your healthcare center';

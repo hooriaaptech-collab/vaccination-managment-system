@@ -1,8 +1,5 @@
 <?php
-/**
- * Parent Child Profile & Personalized Immunization Roadmap
- * E-Vaccination Management System
- */
+
 $page_title = 'Child Roadmap';
 $page_header = 'Child Immunization Roadmap';
 $page_subheader = 'Personalized vaccination timeline calculated from birth date with completion tracking';

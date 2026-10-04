@@ -1,8 +1,5 @@
 <?php
-/**
- * Parent Track Appointment Requests
- * E-Vaccination Management System
- */
+
 $page_title = 'Track Requests';
 $page_header = 'Appointment Requests Status';
 $page_subheader = 'Monitor approval progress and instructions for your vaccination appointments';

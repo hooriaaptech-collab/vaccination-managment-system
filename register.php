@@ -1,8 +1,5 @@
 <?php
-/**
- * User Registration Page (Parent & Hospital)
- * E-Vaccination Management System
- */
+
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/auth.php';

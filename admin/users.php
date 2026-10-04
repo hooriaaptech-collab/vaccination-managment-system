@@ -1,8 +1,5 @@
 <?php
-/**
- * Admin User Accounts Management
- * E-Vaccination Management System
- */
+
 $page_title = 'User Accounts';
 $page_header = 'System User Accounts';
 $page_subheader = 'Manage registered parent and hospital accounts and status';

@@ -1,8 +1,4 @@
 <?php
-/**
- * Parent Portal Dashboard
- * E-Vaccination Management System
- */
 $page_title = 'Parent Dashboard';
 $page_header = 'Parent Care Dashboard';
 $page_subheader = 'Track immunization milestones, book hospital appointments, and manage child health records';

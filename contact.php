@@ -1,8 +1,5 @@
 <?php
-/**
- * Contact Us Page
- * E-Vaccination Management System
- */
+
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/auth.php';

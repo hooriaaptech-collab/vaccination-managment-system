@@ -1,8 +1,5 @@
 <?php
-/**
- * Parent Vaccination History & Official Digital Certificate Generator
- * E-Vaccination Management System
- */
+
 $page_title = 'Vaccination History';
 $page_header = 'Immunization History & Official Certificates';
 $page_subheader = 'View verified childhood vaccination records and generate printable immunization certificates';

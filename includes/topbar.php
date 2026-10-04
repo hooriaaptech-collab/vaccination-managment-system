@@ -1,9 +1,5 @@
 <?php
-/**
- * Unified Dashboard Topbar Include
- * Responsive with Adaptive Header & Touch Dropdown
- * E-Vaccination Management System
- */
+
 
 $user_role = current_user_role();
 $user_name = current_user_name();

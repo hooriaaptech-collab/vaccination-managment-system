@@ -1,8 +1,5 @@
 <?php
-/**
- * Public Hospital Directory & Search
- * E-Vaccination Management System
- */
+
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/auth.php';
@@ -86,7 +83,7 @@ require_once __DIR__ . '/includes/navbar.php';
         <?php if (!empty($hospitals)): ?>
             <?php foreach ($hospitals as $hosp): ?>
                 <?php
-                    // Image resolve: DB column -> uploaded file -> default placeholder
+                   
                     $default_img = base_url('assets/images/hospital-default.jpg');
                     $hosp_img    = $default_img;
 

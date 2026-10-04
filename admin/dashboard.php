@@ -1,8 +1,5 @@
 <?php
-/**
- * Admin Dashboard
- * E-Vaccination Management System
- */
+
 $page_title = 'Admin Dashboard';
 $page_header = 'System Administration Overview';
 $page_subheader = 'Monitor child registrations, appointment requests, hospital facilities, and vaccination coverage';
